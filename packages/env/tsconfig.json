@@ -1,0 +1,3 @@
+{
+  "extends": "@video-transcriber/config/tsconfig.base.json"
+}

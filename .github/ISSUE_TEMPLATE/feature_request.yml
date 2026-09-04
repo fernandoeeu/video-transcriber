@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose a change that would help you download or transcribe videos.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem first. A concrete proposal is useful, but the problem is the part we need.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem you want to solve
+      description: What is painful or missing today? Who hits this, and when?
+      placeholder: I cannot tell which transcription belongs to which Whisper model when I re-run the same video.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should the app do instead?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you tried or rejected, and why they were not enough.
+    validations:
+      required: false
+  - type: textarea
+    id: extra-context
+    attributes:
+      label: Additional context
+      description: Screenshots, related issues, or anything else that would help.
+    validations:
+      required: false

@@ -1,0 +1,81 @@
+name: Bug report
+description: Something went wrong while downloading or transcribing a video.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. This is a local single-user app: paste a URL, yt-dlp downloads the audio, Whisper transcribes it on your machine.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you see that was wrong?
+      placeholder: The download started, then the app showed an error and the video never appeared in the library.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the steps someone else would follow to hit the same bug.
+      placeholder: |
+        1. Paste a YouTube URL on the home screen.
+        2. Click download.
+        3. Wait until the error appears.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened instead?
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS and version
+      description: Operating system and version you ran the app on.
+      placeholder: macOS 15.6
+    validations:
+      required: true
+  - type: input
+    id: bun-version
+    attributes:
+      label: Bun version
+      description: Output of `bun --version`.
+      placeholder: 1.3.14
+    validations:
+      required: true
+  - type: input
+    id: ytdlp-version
+    attributes:
+      label: yt-dlp version
+      description: Output of `yt-dlp --version`.
+      placeholder: 2026.08.15
+    validations:
+      required: true
+  - type: input
+    id: whisper
+    attributes:
+      label: Whisper engine and model
+      description: Transcription engine and model in use when this happened.
+      placeholder: whisper.cpp / ggml-large-v3
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Source URL
+      description: The origin URL, if you can share it. Leave blank if it is private.
+      placeholder: https://www.youtube.com/watch?v=...
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste terminal, browser, or app logs that show the failure. They will be formatted as code.
+      render: shell
+    validations:
+      required: false

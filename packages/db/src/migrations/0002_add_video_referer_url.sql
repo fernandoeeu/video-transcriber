@@ -1,0 +1,1 @@
+ALTER TABLE `videos` ADD `referer_url` text;
