@@ -36,7 +36,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@video-transcriber/config": "workspace:*",
-    "@vitejs/plugin-react": "^6.0.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "jsdom": "^30.0.0",
     "typescript": "catalog:",
     "vite": "^8.1.5",
