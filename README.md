@@ -45,7 +45,7 @@ Open [http://localhost:3001](http://localhost:3001). The Vite server port is `30
 
 ## MCP
 
-The running app exposes a **stateless** MCP server at [http://localhost:3001/mcp](http://localhost:3001/mcp) (Streamable HTTP, official `@modelcontextprotocol/sdk`). There is no session id: each request creates a fresh server and transport. GET and DELETE return 405.
+The running app exposes a **stateless** MCP server at [http://localhost:3001/mcp](http://localhost:3001/mcp) (Streamable HTTP, official `@modelcontextprotocol/sdk`). There is no session id: each request creates a fresh server and transport. GET and DELETE return 405. Only loopback `Host`/`Origin` headers (`localhost`, `127.0.0.1`, `[::1]`) on the port the app is listening on are accepted; anything else gets 403 (DNS-rebinding protection). If Vite picks a different port because 3001 is busy, use the URL it prints.
 
 Start the app with `bun run dev`, then point an MCP client at that URL. Example client config:
 

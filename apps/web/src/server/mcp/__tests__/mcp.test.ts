@@ -385,9 +385,9 @@ describe("MCP Streamable HTTP", () => {
         defaultMediaDir: tempDir,
         projectRoot: tempDir,
       });
-    const listTools = (headers: Record<string, string>) =>
+    const listTools = (headers: Record<string, string>, url = "http://localhost:3001/mcp") =>
       handleMcpRequest(
-        new Request("http://localhost:3001/mcp", {
+        new Request(url, {
           method: "POST",
           headers: {
             accept: "application/json, text/event-stream",
@@ -418,5 +418,18 @@ describe("MCP Streamable HTTP", () => {
     expect(local.status).toBe(200);
     const payload = await readJsonRpc(local);
     expect(payload).toHaveProperty("result.tools");
+
+    const otherPort = await listTools(
+      { host: "localhost:3002", origin: "http://localhost:3002" },
+      "http://localhost:3002/mcp",
+    );
+    expect(otherPort.status).toBe(200);
+    expect(await readJsonRpc(otherPort)).toHaveProperty("result.tools");
+
+    const reboundOtherPort = await listTools(
+      { host: "attacker.example:3002" },
+      "http://attacker.example:3002/mcp",
+    );
+    expect(reboundOtherPort.status).toBe(403);
   });
 });
