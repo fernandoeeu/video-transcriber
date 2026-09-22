@@ -349,6 +349,29 @@ export async function downloadVideoAudio(
   return runClaimedVideoAudioDownload(claim.video, runner, db, mediaDir);
 }
 
+/**
+ * Claim a Video for download and run yt-dlp in the background.
+ * Returns the claimed Video immediately (status downloading).
+ */
+export async function beginVideoAudioDownload(
+  videoId: number,
+  request: DownloadRequest,
+  runner: ProcessRunner,
+  db: Db,
+  mediaDir: string,
+): Promise<VideoMetadata | null> {
+  const claim = await claimVideoAudioDownload(videoId, request, db);
+  if (!claim.ok) {
+    return getVideoById(videoId, db);
+  }
+
+  void runClaimedVideoAudioDownload(claim.video, runner, db, mediaDir).catch(() => {
+    // The execution helper persists failures before returning.
+  });
+
+  return claim.video;
+}
+
 export interface DeleteSuccess {
   ok: true;
 }

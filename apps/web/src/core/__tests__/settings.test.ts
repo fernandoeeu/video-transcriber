@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { downloadVideoAudio, fetchVideoMetadata, getVideoById } from "../video";
 import {
+  clearDownloadFolder,
   defaultMediaDir,
   getDownloadFolder,
   getSetting,
@@ -79,10 +80,7 @@ describe("settings", () => {
     await setDownloadFolder(db, customDir);
     expect(await getDownloadFolder(db, defaultDir)).toBe(customDir);
 
-    // Remove the setting by deleting the row
-    const { eq } = await import("drizzle-orm");
-    const { settings } = await import("@video-transcriber/db/schema");
-    await db.delete(settings).where(eq(settings.key, "download_folder"));
+    await clearDownloadFolder(db);
 
     expect(await getDownloadFolder(db, defaultDir)).toBe(defaultDir);
   });

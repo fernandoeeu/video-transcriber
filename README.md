@@ -43,6 +43,24 @@ Open [http://localhost:3001](http://localhost:3001). The Vite server port is `30
 
 `.env` must live at `apps/web/.env`. `packages/db/drizzle.config.ts` loads that path for `db:*` commands. The web env schema (`packages/env/src/server.ts`) uses `dotenv/config`, which reads a `.env` in the process working directory — keep the file under `apps/web` so it matches drizzle-kit. A `.env` at the repo root is not what the database tooling reads.
 
+## MCP
+
+The running app exposes a **stateless** MCP server at [http://localhost:3001/mcp](http://localhost:3001/mcp) (Streamable HTTP, official `@modelcontextprotocol/sdk`). There is no session id: each request creates a fresh server and transport. GET and DELETE return 405. Only loopback `Host`/`Origin` headers (`localhost`, `127.0.0.1`, `[::1]`) on the port the app is listening on are accepted; anything else gets 403 (DNS-rebinding protection). If Vite picks a different port because 3001 is busy, use the URL it prints.
+
+Start the app with `bun run dev`, then point an MCP client at that URL. Example client config:
+
+```json
+{
+  "mcpServers": {
+    "video-transcriber": {
+      "url": "http://localhost:3001/mcp"
+    }
+  }
+}
+```
+
+Tools cover the download and transcription mechanism: `preview_video`, `list_videos`, `get_video`, `download_video`, `redownload_video`, `delete_video`, `transcribe_video`, `get_transcription`, `list_transcriptions`, `get_latest_transcription`, `export_transcription_txt`, `export_transcription_srt`, `get_dependencies`, `get_settings`, `update_download_folder`, and `reset_download_folder`.
+
 ## Configuration
 
 ### Environment variables
