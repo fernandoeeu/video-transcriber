@@ -4,12 +4,11 @@ import { z } from "zod";
 import { createProcessRunner } from "../core/process-runner";
 import { defaultMediaDir, getDownloadFolder } from "../core/settings";
 import {
-  claimVideoAudioDownload,
+  beginVideoAudioDownload,
   deleteVideo as deleteVideoCore,
   fetchVideoMetadata,
   getVideoById,
   listVideos,
-  runClaimedVideoAudioDownload,
   type DownloadRequest,
 } from "../core/video";
 import { db } from "./db";
@@ -37,17 +36,7 @@ export const getVideo = createServerFn({ method: "GET" })
 
 async function startVideoDownload(videoId: number, request: DownloadRequest) {
   const mediaDir = await getDownloadFolder(db, DEFAULT_MEDIA_DIR);
-  const claim = await claimVideoAudioDownload(videoId, request, db);
-
-  if (!claim.ok) {
-    return getVideoById(videoId, db);
-  }
-
-  void runClaimedVideoAudioDownload(claim.video, runner, db, mediaDir).catch(() => {
-    // The execution helper persists failures before returning.
-  });
-
-  return claim.video;
+  return beginVideoAudioDownload(videoId, request, runner, db, mediaDir);
 }
 
 export const downloadVideo = createServerFn({ method: "POST" })

@@ -1,7 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { defaultMediaDir, getDownloadFolder, setDownloadFolder } from "../core/settings";
+import {
+  clearDownloadFolder,
+  defaultMediaDir,
+  getDownloadFolder,
+  setDownloadFolder,
+} from "../core/settings";
 import { db } from "./db";
 
 const PROJECT_ROOT = new URL("../../../../", import.meta.url).pathname.replace(/\/$/, "");
@@ -21,9 +26,6 @@ export const updateDownloadFolder = createServerFn({ method: "POST" })
   });
 
 export const resetDownloadFolder = createServerFn({ method: "POST" }).handler(async () => {
-  // Remove the setting so it falls back to the default
-  const { eq } = await import("drizzle-orm");
-  const { settings } = await import("@video-transcriber/db/schema");
-  await db.delete(settings).where(eq(settings.key, "download_folder"));
+  await clearDownloadFolder(db);
   return { downloadFolder: DEFAULT_MEDIA_DIR, defaultDownloadFolder: DEFAULT_MEDIA_DIR };
 });

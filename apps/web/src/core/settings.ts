@@ -46,6 +46,13 @@ export async function setDownloadFolder(db: Db, folder: string): Promise<void> {
 }
 
 /**
+ * Remove the stored download folder so callers fall back to the default.
+ */
+export async function clearDownloadFolder(db: Db): Promise<void> {
+  await db.delete(schema.settings).where(eq(schema.settings.key, DOWNLOAD_FOLDER_KEY));
+}
+
+/**
  * Compute the default media directory for a given project root.
  */
 export function defaultMediaDir(projectRoot: string): string {
