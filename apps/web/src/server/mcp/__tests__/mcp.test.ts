@@ -329,6 +329,7 @@ describe("MCP Streamable HTTP", () => {
       new Request("http://localhost:3001/mcp", {
         method: "POST",
         headers: {
+          host: "localhost:3001",
           accept: "application/json, text/event-stream",
           "content-type": "application/json",
         },
@@ -370,5 +371,52 @@ describe("MCP Streamable HTTP", () => {
     expect(del.status).toBe(405);
 
     await server.close();
+  });
+
+  it("rejects non-loopback Host and Origin headers (DNS rebinding)", async () => {
+    const testDb = createTestDb(join(tempDir, "test.db"));
+    await testDb.applySchema();
+    const createServer = () =>
+      createVideoTranscriberMcpServer({
+        db: testDb.db,
+        runner: createFakeRunner([]),
+        getQueue: async () => createTranscriptionQueue(),
+        getMediaDir: async () => tempDir,
+        defaultMediaDir: tempDir,
+        projectRoot: tempDir,
+      });
+    const listTools = (headers: Record<string, string>) =>
+      handleMcpRequest(
+        new Request("http://localhost:3001/mcp", {
+          method: "POST",
+          headers: {
+            accept: "application/json, text/event-stream",
+            "content-type": "application/json",
+            ...headers,
+          },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+        }),
+        createServer,
+      );
+
+    const rebound = await listTools({ host: "attacker.example:3001" });
+    expect(rebound.status).toBe(403);
+    expect(await rebound.json()).toMatchObject({
+      error: { code: -32000, message: "Invalid Host header: attacker.example:3001" },
+    });
+
+    const crossOrigin = await listTools({
+      host: "localhost:3001",
+      origin: "http://attacker.example",
+    });
+    expect(crossOrigin.status).toBe(403);
+    expect(await crossOrigin.json()).toMatchObject({
+      error: { code: -32000, message: "Invalid Origin header: http://attacker.example" },
+    });
+
+    const local = await listTools({ host: "127.0.0.1:3001", origin: "http://127.0.0.1:3001" });
+    expect(local.status).toBe(200);
+    const payload = await readJsonRpc(local);
+    expect(payload).toHaveProperty("result.tools");
   });
 });

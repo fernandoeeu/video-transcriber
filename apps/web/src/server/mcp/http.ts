@@ -7,6 +7,11 @@ const METHOD_NOT_ALLOWED = {
   id: null,
 };
 
+const MCP_PORT = 3001;
+const LOOPBACK_HOSTS = ["localhost", "127.0.0.1", "[::1]"];
+const ALLOWED_HOSTS = LOOPBACK_HOSTS.map((host) => `${host}:${MCP_PORT}`);
+const ALLOWED_ORIGINS = ALLOWED_HOSTS.map((host) => `http://${host}`);
+
 const INTERNAL_ERROR = {
   jsonrpc: "2.0" as const,
   error: { code: -32603, message: "Internal server error" },
@@ -16,6 +21,7 @@ const INTERNAL_ERROR = {
 /**
  * Handle one Streamable HTTP MCP request in stateless mode: no session id,
  * a fresh server and transport per request. GET and DELETE are rejected.
+ * Only loopback Host/Origin headers are accepted (DNS-rebinding protection).
  */
 export async function handleMcpRequest(
   request: Request,
@@ -28,6 +34,9 @@ export async function handleMcpRequest(
   const server = createServer();
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
+    enableDnsRebindingProtection: true,
+    allowedHosts: ALLOWED_HOSTS,
+    allowedOrigins: ALLOWED_ORIGINS,
   });
 
   await server.connect(transport);
