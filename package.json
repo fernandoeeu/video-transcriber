@@ -56,7 +56,7 @@
     "@video-transcriber/config": "workspace:*",
     "rolldown": "1.2.0",
     "typescript": "catalog:",
-    "vite-plus": "0.2.6"
+    "vite-plus": "0.3.0"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6"
